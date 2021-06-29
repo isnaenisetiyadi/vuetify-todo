@@ -1,28 +1,102 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-app id="inspire">
+    <v-navigation-drawer v-model="drawer" app :mobile-breakpoint="768">
+      <!-- <v-list-item>
+        <v-list-item-content>
+          <v-list-item-title class="text-h6"> Vuetify Todo </v-list-item-title>
+          <v-list-item-subtitle> Best Todo Event </v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item> -->
+      <v-img
+        :height="$route.path === '/' ? '230' : '150'"
+        class="pa-4"
+        src="mountains.jpeg"
+        gradient="to top right, rgba(19,84,122,.5), rgba(128,208,199,.8)"
+      >
+        <v-avatar size="70">
+          <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="Isnaeni" />
+        </v-avatar>
+        <div class="white--text text-subtitle-1 font-weight-bold">Isnaeni</div>
+        <div class="white--text text-subtitle-2">isnaeni_setiyadi</div>
+      </v-img>
+      <v-divider></v-divider>
+
+      <v-list dense nav>
+        <v-list-item v-for="item in items" :key="item.title" link :to="item.to">
+          <v-list-item-icon>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-content>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+
+    <v-app-bar
+      :height="$route.path === '/' ? '230' : '150'"
+      app
+      color="primary"
+      dark
+      src="mountains.jpeg"
+      prominent
+    >
+      <template v-slot:img="{ props }">
+        <v-img
+          v-bind="props"
+          gradient="to top right, rgba(19,84,122,.9), rgba(128,208,199,.8)"
+        ></v-img>
+      </template>
+      <v-container fluid class="pa-0">
+        <v-row class="pt-2">
+          <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+          <v-spacer></v-spacer>
+          <search />
+        </v-row>
+        <v-row>
+          <!-- <v-app-bar-title class="ml-3">Vuetify Todo</v-app-bar-title> -->
+          <v-toolbar-title class="text-h4 ml-4"> Vuetify Todo </v-toolbar-title>
+        </v-row>
+        <v-row>
+          <live-date-time />
+        </v-row>
+        <v-row>
+          <field-add-task v-if="$route.path === '/'" />
+        </v-row>
+      </v-container>
+    </v-app-bar>
+
+    <v-main>
+      <!--  -->
+      <router-view></router-view>
+      <snackbar />
+    </v-main>
+  </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import SnackBar from "./components/Shared/Snackbar.vue";
+import Search from "./components/Tools/Search.vue";
+import LiveDateTime from "./components/Tools/LiveDateTime.vue";
+import FieldAddTask from "./components/Todo/FieldAdd.vue";
 export default {
-  name: 'App',
   components: {
-    HelloWorld
-  }
-}
-</script>
+    snackbar: SnackBar,
+    search: Search,
+    "live-date-time": LiveDateTime,
+    "field-add-task": FieldAddTask,
+  },
+  mounted() {
+    this.$store.dispatch("getTasks");
+  },
+  data: () => ({
+    drawer: null,
+    items: [
+      { title: "Todo", icon: "mdi-format-list-checks", to: "/" },
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+      { title: "About", icon: "mdi-help-box", to: "/about" },
+    ],
+  }),
+};
+</script>
